@@ -10,7 +10,9 @@ public class Treinando {
     private int id;
     private String nome;
     private int ttlMultiplicacao;
-    private int ttldivisao;
+    private int ttldivisao = 0;
+    private int ttlErro = 0;
+    private int ttlAcerto = 0;
 
 
     @Ignore
@@ -22,6 +24,22 @@ public class Treinando {
     }
 
     public Treinando() {
+    }
+
+    public int getTtlErro() {
+        return ttlErro;
+    }
+
+    public void setTtlErro(int ttlErro) {
+        this.ttlErro = ttlErro;
+    }
+
+    public int getTtlAcerto() {
+        return ttlAcerto;
+    }
+
+    public void setTtlAcerto(int ttlAcerto) {
+        this.ttlAcerto = ttlAcerto;
     }
 
     public int getTtlMultiplicacao() {

@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean multiplicacao = true;
     public boolean divisao = false;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void configuraInicioJogo() {
-        List<Treinando> todos = daoTreinandoRoom.todos();
+         List<Treinando> todos = daoTreinandoRoom.todos();
         if (todos.size() == 0) {
             treinando = new Treinando(1, "Ana Luiza", 0, 0);
             daoTreinandoRoom.salva(treinando);
@@ -80,7 +81,11 @@ public class MainActivity extends AppCompatActivity {
         } else {
             treinando = daoTreinandoRoom.consultaPontual(1);
             ttlMultiplicacao = treinando.getTtlMultiplicacao();
+            numeroErro       = treinando.getTtlErro();
+            numeroAcerto     = treinando.getTtlAcerto();
             pontuacao.setText("Pontuacáo : " + String.valueOf(ttlMultiplicacao));
+            acertos.setText  ("Acertos : " + String.valueOf(numeroAcerto));
+            erros.setText("Erros   : " + String.valueOf(numeroErro));
         }
     }
 
@@ -89,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
         primeiro = findViewById(R.id.id_primeiro_numero);
         operador = findViewById(R.id.id_operador);
         segundo = findViewById(R.id.id_segundo_numero);
-
         botaoum = findViewById(R.id.item_resultado_um);
         botaodois = findViewById(R.id.item_resultado_dois);
         botaotres = findViewById(R.id.item_resultado_tres);
@@ -117,6 +121,12 @@ public class MainActivity extends AppCompatActivity {
                     formataBotaoErro(posicaoBotao);
 
                 }
+                treinando = daoTreinandoRoom.consultaPontual(1);
+                treinando.setTtlAcerto(numeroAcerto);
+                treinando.setTtlErro(numeroErro);
+                daoTreinandoRoom.edita(treinando);
+
+
             }
         };
     }
@@ -144,24 +154,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void gerarNovoCalculo() {
-        if (numeroAcerto == 5) {
+        if (numeroAcerto == 46) {
             reiniciaFase();
         }
 
         if (multiplicacao) {
             geraAleatorioValoresMultiplicacao();
             geraResultadoCerto();
-            geraAleatorioMultiplicacao();
+            final int boundSemente = 101;
+            geraAleatorio(boundSemente);
         } else {
             geraAleatorioValoresDivisao();
             geraResultadoCerto();
-            geraAleatorioDivisao();
+            int boundSemente = 10;
+            geraAleatorio(boundSemente);
         }
     }
 
     private void reiniciaFase() {
-        numeroAcerto = 0;
-        numeroErro = 0;
         if (multiplicacao) {
             multiplicacao = false;
             divisao = true;
@@ -170,13 +180,20 @@ public class MainActivity extends AppCompatActivity {
             divisao = false;
         }
 
+        if ( numeroErro < 21) {
 
-        ttlMultiplicacao = ttlMultiplicacao + 1;
+            ttlMultiplicacao = ttlMultiplicacao + 1;
 
-        treinando = daoTreinandoRoom.consultaPontual(1);
-        treinando.setTtlMultiplicacao(ttlMultiplicacao);
-        daoTreinandoRoom.edita(treinando);
-        pontuacao.setText("Pontuacáo : " + String.valueOf(ttlMultiplicacao));
+            treinando = daoTreinandoRoom.consultaPontual(1);
+            treinando.setTtlMultiplicacao(ttlMultiplicacao);
+            daoTreinandoRoom.edita(treinando);
+            pontuacao.setText("Pontuacáo : " + String.valueOf(ttlMultiplicacao));
+        }
+        numeroAcerto = 0;
+        numeroErro = 0;
+        acertos.setText("Acertos= " + String.valueOf(numeroAcerto));
+        erros.setText  ("Erros  = " + String.valueOf(numeroErro));
+
     }
 
     private void configuraTelaBotoes() {
@@ -194,10 +211,11 @@ public class MainActivity extends AppCompatActivity {
         botaoquatro.setText(String.valueOf(aleatorio4));
     }
 
-    private void geraAleatorioMultiplicacao() {
+
+    private void geraAleatorio(int boundSemente) {
         boolean continua = true;
         while (continua) {
-            aleatorio1 = random.nextInt(101);
+            aleatorio1 = random.nextInt(boundSemente);
             if (aleatorio1 != resultadoCerto) {
                 continua = false;
             }
@@ -205,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
 
         continua = true;
         while (continua) {
-            aleatorio2 = random.nextInt(101);
+            aleatorio2 = random.nextInt(boundSemente);
             if (aleatorio2 != resultadoCerto && aleatorio2 != aleatorio1) {
                 continua = false;
             }
@@ -213,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
 
         continua = true;
         while (continua) {
-            aleatorio3 = random.nextInt(101);
+            aleatorio3 = random.nextInt(boundSemente);
             if (aleatorio3 != resultadoCerto && aleatorio3 != aleatorio1 && aleatorio3 != aleatorio2) {
                 continua = false;
             }
@@ -221,47 +239,13 @@ public class MainActivity extends AppCompatActivity {
 
         continua = true;
         while (continua) {
-            aleatorio4 = random.nextInt(101);
+            aleatorio4 = random.nextInt(boundSemente);
             if (aleatorio4 != resultadoCerto && aleatorio4 != aleatorio1 && aleatorio4 != aleatorio2 && aleatorio4 != aleatorio3 ) {
                 continua = false;
             }
         }
     }
 
-    private void geraAleatorioDivisao() {
-
-        boolean continua = true;
-        while (continua) {
-            aleatorio1 = random.nextInt(10);
-            if (aleatorio1 != resultadoCerto) {
-                continua = false;
-            }
-        }
-
-        continua = true;
-        while (continua) {
-            aleatorio2 = random.nextInt(10);
-            if (aleatorio2 != resultadoCerto) {
-                continua = false;
-            }
-        }
-
-        continua = true;
-        while (continua) {
-            aleatorio3 = random.nextInt(10);
-            if (aleatorio3 != resultadoCerto) {
-                continua = false;
-            }
-        }
-
-        continua = true;
-        while (continua) {
-            aleatorio4 = random.nextInt(10);
-            if (aleatorio4 != resultadoCerto) {
-                continua = false;
-            }
-        }
-    }
 
     private void geraAleatorioValoresMultiplicacao() {
         valorPrimeiro = random.nextInt(10);
